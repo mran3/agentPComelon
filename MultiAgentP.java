@@ -141,8 +141,6 @@ public class MultiAgentP implements AgentProgram {
                 PI=true;
             }
 
-            
-        
         if (MT) {
             System.out.println("Fin");
             return -1;

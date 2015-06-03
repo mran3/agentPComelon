@@ -130,9 +130,10 @@ public class AgentP implements AgentProgram {
     
     public int accion(boolean PF, boolean PD, boolean PA, boolean PI, boolean MT) {
         //System.out.println("AF: "+AF+" AD:"+AD+" AA:"+AA+" AI:"+AI);
-        System.out.println(direction);
-           
-        
+         System.out.println(language.getPercept(6));
+         boolean resource=((Boolean) p.getAttribute(language.getPercept(3)));
+        //System.out.println(direction);
+
         if (MT) {
             System.out.println("Fin");
             return -1;
@@ -160,15 +161,15 @@ public class AgentP implements AgentProgram {
                             System.out.println("Bucle.");
                             currentNode.visited = true;
                                System.out.println("family unvisited: "+graph.familyHaveUnvisited(currentNode, x,y,0));
-                            if (graph.familyHaveUnvisited(currentNode, x, y,0)==1) {
+                            if (graph.familyHaveUnvisited(currentNode, x, y,0)>3) {
                                 System.out.println("Vuelve!");
-
                                 direction = oposite(direction);
                                 currentNode = currentNode.parent;
                                 computeCoordinates();
                                 return 2;
                             }
                             System.out.println("Sigue!");
+                            
                             currentNode = havebeen.parent;
                             rotateTo(oposite(havebeen.direction));
                             computeCoordinates();
@@ -194,50 +195,44 @@ public class AgentP implements AgentProgram {
                     Random rand = new Random();
 
                     //heuristic
-                    if (currentNode.children[0] != null && rand.nextInt(10) < 8) {
-
+                    if (currentNode.children[0] != null && rand.nextInt(10) < 9) {
+                         //la mayoría de las veces sigue derecho
                         currentNode = currentNode.children[0];
                         computeCoordinates();
                         return 0;
-
-                    } else {
-                        boolean selected = false;
+                    }
+                    else 
+                    {
                         int i = 0;
                         //if it hasnt available children 
-                        int count = 0;
-                        while (!selected && count < 16) {
-
-                            i = rand.nextInt(4);
+                        for(i=0;i<4;i++)
+                        {
                             if (currentNode.children[i] != null) {
                                 currentNode = currentNode.children[i];
                                 direction = (i + direction) % 4;
-                                selected = true;
                                 computeCoordinates();
                                 return i;
-
                             }
-                            count++;
                         }
                     }
 
                 } else {
                     //System.out.println("11111");
                     //ya fue visitado
-                    boolean selected = false;
                     int i = 0;
                     int count = 0;
-                    while (!selected && count < 16) {
+                    while ( count < 16) {
                         Random rand = new Random();
                         i = rand.nextInt(4);
-
                         if (currentNode.children[i] != null) {
                             if (!currentNode.children[i].visited) {
                                 //System.out.println("QUEDA UNA RUTA!!");
-                                rotateTo(currentNode.direction);
+                                //
+ 
+                                rotateTo((currentNode.direction+i)%4);
                                 currentNode = currentNode.children[i];
-                                direction = (i + direction) % 4;
                                 computeCoordinates();
-                                return i;
+                                return 0;
                             }
                         }
                         count++;
