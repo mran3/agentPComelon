@@ -1,4 +1,4 @@
-/*
+﻿/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -130,8 +130,8 @@ public class AgentP implements AgentProgram {
     
     public int accion(boolean PF, boolean PD, boolean PA, boolean PI, boolean MT) {
         //System.out.println("AF: "+AF+" AD:"+AD+" AA:"+AA+" AI:"+AI);
-         System.out.println(language.getPercept(6));
-         boolean resource=((Boolean) p.getAttribute(language.getPercept(3)));
+         //System.out.println(language.getPercept(6));
+         //boolean resource=((Boolean) p.getAttribute(language.getPercept(3)));
         //System.out.println(direction);
 
         if (MT) {
