@@ -56,6 +56,18 @@ public class Graph {
         }
         return vertices;
     }
+    public int isParent(Node n1, Node n2)
+    {
+        for(int i=0;i<4;i++){
+            if(n1.children[i]!=null)
+            {
+                if(n1.children[i]==n2){
+                return i;
+                }
+            }
+        }
+        return 4;
+    }
     public void printGraph(Node node,int depth){
         if(node==null){
             System.out.println("--");

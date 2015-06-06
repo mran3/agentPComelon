@@ -32,6 +32,7 @@ public class AgentP implements AgentProgram {
     int y = 0;
     boolean start = true;
     int traveledDistance=0;
+    List <Vertex> pathToShortestUnvisited= new ArrayList<Vertex>();
     public AgentP() {
         currentNode.visited = false;
         System.out.println("hello agent Pedro.");
@@ -149,6 +150,32 @@ public class AgentP implements AgentProgram {
         }
         if (possibleWaysCount >= 2) {
             traveledDistance++;
+            if(pathToShortestUnvisited.size()>1)
+            {
+                //remove current
+                pathToShortestUnvisited.remove(0);
+                int isParentIndex =graph.isParent(currentNode, pathToShortestUnvisited.get(0).node);
+                // if ist not its parent it returns 4
+                if(graph.isParent(currentNode, pathToShortestUnvisited.get(0).node)<4)
+                {
+                    //is its parent
+                    rotateTo((currentNode.direction+isParentIndex)%4);
+                    currentNode = currentNode.children[isParentIndex];
+                    computeCoordinates();
+                    System.out.println("Going to... : " + currentNode);
+                    return 0;
+                }
+                else
+                {
+                    //its a child
+                    rotateTo(oposite(currentNode.direction));
+                    currentNode = currentNode.parent;
+                    computeCoordinates();
+                    System.out.println("Going to... : " + currentNode);
+                    return 0;
+                }
+                //System.out.println("Path: " + pathToShortestUnvisited.toString());
+            }
             //System.out.println(possibleWaysCount);
             //2 is behind
             if (currentNode != null) {
@@ -186,6 +213,8 @@ public class AgentP implements AgentProgram {
                            // graph.printGraph(graph.root, 0);
                             System.out.println("size: "+graph.getVetices(graph.root, new ArrayList<Vertex>(), new Vertex("root",graph.root) ).size());
                             List<Vertex> vertices = graph.getDijkstraGraph();
+                            int closestUnvisitedDistance=1000;
+                            Node closestUnvisitedNode=null;
                             for (Vertex v : vertices)
                             {
                                 if(v.node==havebeen)
@@ -196,30 +225,68 @@ public class AgentP implements AgentProgram {
                                     {
                                         if(uv.contains(v1.node))
                                         {
-                                            System.out.println("Distance to "+v1+": " + v1.minDistance);
-                                            List<Vertex> path = Dijkstra.getShortestPathTo(v1);
-                                            System.out.println("Path: " + path);
+                                            //System.out.println("Distance to "+v1+": " + v1.minDistance);
+                                            //List<Vertex> path = Dijkstra.getShortestPathTo(v1);
+                                           //System.out.println("Path: " + path);
+                                            if(v1.minDistance<closestUnvisitedDistance)
+                                            {
+                                                closestUnvisitedDistance=(int)v1.minDistance;
+                                                closestUnvisitedNode=v1.node;
+                                                
+                                            }
                                         } 
+                                    }
+                                    
+                                    if(closestUnvisitedNode!=null)
+                                    {
+                                        System.out.println("Distance to "+closestUnvisitedNode+": " + closestUnvisitedDistance);
+                                        pathToShortestUnvisited=Dijkstra.getShortestPathTo(graph.getVertexOfNode(closestUnvisitedNode,vertices));
+                                        System.out.println("Path: " + pathToShortestUnvisited.toString());
+                                        
+                                        //remove current
+                                        pathToShortestUnvisited.remove(0);
+                                        int isParentIndex =graph.isParent(havebeen, pathToShortestUnvisited.get(0).node);
+                                        // if ist not its parent it returns 4
+                                        
+                                        if(graph.isParent(havebeen, pathToShortestUnvisited.get(0).node)<4)
+                                        {
+                                            //is its parent
+                                            rotateTo((havebeen.direction+isParentIndex)%4);
+                                            currentNode = havebeen.children[isParentIndex];
+                                            computeCoordinates();
+                                            System.out.println("Going to... : " + currentNode);
+                                            return 0;
+                                        }
+                                        else
+                                        {
+                                            //its a child
+                                            rotateTo(oposite(havebeen.direction));
+                                            currentNode = havebeen.parent;
+                                            computeCoordinates();
+                                            System.out.println("Going to... : " + currentNode);
+                                            return 0;
+                                        }
+                                        //
                                     }
                                 }
                             }
                             
                             
-                            System.out.println("family unvisited: "+graph.familyHaveUnvisited(currentNode, x,y,0));
-                            if (graph.familyHaveUnvisited(currentNode, x, y,0)>3) {
-                                System.out.println("Vuelve!");
-                                direction = oposite(direction);
-                                currentNode = currentNode.parent;
-                                computeCoordinates();
-                                return 2;
-                            }
-                            System.out.println("Sigue!");
-
-                            //System.out.println("no hay mas rutas, sigue por donde vino!");
-                            currentNode = havebeen.parent;
-                            rotateTo(oposite(havebeen.direction));
-                            computeCoordinates();
-                            return 0;
+//                            System.out.println("family unvisited: "+graph.familyHaveUnvisited(currentNode, x,y,0));
+//                            if (graph.familyHaveUnvisited(currentNode, x, y,0)>3) {
+//                                System.out.println("Vuelve!");
+//                                direction = oposite(direction);
+//                                currentNode = currentNode.parent;
+//                                computeCoordinates();
+//                                return 2;
+//                            }
+//                            System.out.println("Sigue!");
+//
+//                            //System.out.println("no hay mas rutas, sigue por donde vino!");
+//                            currentNode = havebeen.parent;
+//                            rotateTo(oposite(havebeen.direction));
+//                            computeCoordinates();
+//                            return 0;
                         }
                     }
                     //System.out.println("11111");
