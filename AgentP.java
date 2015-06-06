@@ -5,6 +5,8 @@
  */
 package unalcol.agents.examples.labyrinth.agentP;
 
+import java.util.ArrayList;
+import java.util.List;
 import unalcol.agents.Action;
 import unalcol.agents.AgentProgram;
 import unalcol.agents.Percept;
@@ -29,7 +31,7 @@ public class AgentP implements AgentProgram {
     int x = 0;
     int y = 0;
     boolean start = true;
-
+    int traveledDistance=0;
     public AgentP() {
         currentNode.visited = false;
         System.out.println("hello agent Pedro.");
@@ -146,6 +148,7 @@ public class AgentP implements AgentProgram {
             start = false;
         }
         if (possibleWaysCount >= 2) {
+            traveledDistance++;
             //System.out.println(possibleWaysCount);
             //2 is behind
             if (currentNode != null) {
@@ -157,7 +160,50 @@ public class AgentP implements AgentProgram {
                         if (havebeen != null) {
                             System.out.println("Bucle.");
                             currentNode.visited = true;
-                               System.out.println("family unvisited: "+graph.familyHaveUnvisited(currentNode, x,y,0));
+                            currentNode.distancetoParent= traveledDistance;
+                            traveledDistance=0;
+                            for(int i=1;i<4;i++)
+                            {
+                                if (havebeen.children[i] != null) {
+                                    if (!havebeen.children[i].visited){
+                                     int childDir=(i+havebeen.direction)%4;
+                                     if(oposite(direction)==childDir)
+                                     {
+                                        System.out.println("hijo mio!!!!!!");
+                                        //havebeen.children[i]=currentNode.parent;
+                                        //distancia recorrida hasta el bucle
+                                        int lostDistance=currentNode.distancetoParent;
+                                       
+                                     }
+                                    }
+                                }
+                            }
+                            //List<Vertex> v=graph.getVetices(graph.root, new ArrayList<Vertex>(), new Vertex("root",graph.root));
+                            //System.out.println(v.size());
+
+                            List<Node> uv =graph.getUnVisited(graph.root,new ArrayList<Node>());
+                           // graph.printGraph(graph.root, 0);
+                            System.out.println("size: "+graph.getVetices(graph.root, new ArrayList<Vertex>(), new Vertex("root",graph.root) ).size());
+                            List<Vertex> vertices = graph.getDijkstraGraph();
+                            for (Vertex v : vertices)
+                            {
+                                if(v.node==havebeen)
+                                {
+                                    Dijkstra.computePaths(v);
+                                    for (Vertex v1 : vertices)
+                                    {
+                                        if(v1.node==uv.get(0))
+                                        {
+                                            System.out.println("Distance to "+v1+": " + v1.minDistance);
+                                            List<Vertex> path = Dijkstra.getShortestPathTo(v1);
+                                            System.out.println("Path: " + path);
+                                        } 
+                                    }
+                                }
+                            }
+                            
+                            
+                            System.out.println("family unvisited: "+graph.familyHaveUnvisited(currentNode, x,y,0));
                             if (graph.familyHaveUnvisited(currentNode, x, y,0)>3) {
                                 System.out.println("Vuelve!");
                                 direction = oposite(direction);
@@ -166,7 +212,8 @@ public class AgentP implements AgentProgram {
                                 return 2;
                             }
                             System.out.println("Sigue!");
-                            
+
+                            //System.out.println("no hay mas rutas, sigue por donde vino!");
                             currentNode = havebeen.parent;
                             rotateTo(oposite(havebeen.direction));
                             computeCoordinates();
@@ -188,11 +235,13 @@ public class AgentP implements AgentProgram {
                     currentNode.x = x;
                     currentNode.y = y;
                     System.out.println("Node visited, dir: " + direction);
+                    System.out.println("Distance: " + traveledDistance);
                     currentNode.direction = direction;
                     Random rand = new Random();
-
+                    currentNode.distancetoParent=traveledDistance;
+                    traveledDistance=0;
                     //heuristic
-                    if (currentNode.children[0] != null && rand.nextInt(10) < 9) {
+                    if (currentNode.children[0] != null && rand.nextInt(10) < 6) {
                          //la mayoría de las veces sigue derecho
                         currentNode = currentNode.children[0];
                         computeCoordinates();
@@ -200,9 +249,8 @@ public class AgentP implements AgentProgram {
                     }
                     else 
                     {
-                        int i = 0;
                         //if it hasnt available children 
-                        for(i=0;i<4;i++)
+                        for(int i=1;i<4;i++)
                         {
                             if (currentNode.children[i] != null) {
                                 currentNode = currentNode.children[i];
@@ -214,7 +262,7 @@ public class AgentP implements AgentProgram {
                     }
 
                 } else {
-                    //System.out.println("11111");
+                    System.out.println("este nodo ya fue visitado");
                     //ya fue visitado
                     int i = 0;
                     int count = 0;
@@ -224,8 +272,6 @@ public class AgentP implements AgentProgram {
                         if (currentNode.children[i] != null) {
                             if (!currentNode.children[i].visited) {
                                 //System.out.println("QUEDA UNA RUTA!!");
-                                //
- 
                                 rotateTo((currentNode.direction+i)%4);
                                 currentNode = currentNode.children[i];
                                 computeCoordinates();
@@ -268,6 +314,7 @@ public class AgentP implements AgentProgram {
 
         if (possibleWaysCount == 1) {
             //System.out.println("one way!!");
+            traveledDistance++;
             if (!PF) {
                 computeCoordinates();
                 return 0;
@@ -288,6 +335,8 @@ public class AgentP implements AgentProgram {
             if (currentNode != null) {
                 currentNode.visited = true;
                 direction = oposite(direction);
+                currentNode.distancetoParent=traveledDistance;
+                traveledDistance=0;
                 currentNode = currentNode.parent;
             }
 

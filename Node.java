@@ -16,6 +16,7 @@ public class Node {
     int direction;
     int x=0;
     int y=0;
+    int distancetoParent=0;
     public Node(Node _parent)
     {
         children = new Node[4];
