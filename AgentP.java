@@ -170,6 +170,7 @@ public class AgentP implements AgentProgram {
                                      if(oposite(direction)==childDir)
                                      {
                                         System.out.println("hijo mio!!!!!!");
+                                        havebeen.children[i].visited=true;
                                         //havebeen.children[i]=currentNode.parent;
                                         //distancia recorrida hasta el bucle
                                         int lostDistance=currentNode.distancetoParent;
@@ -190,9 +191,10 @@ public class AgentP implements AgentProgram {
                                 if(v.node==havebeen)
                                 {
                                     Dijkstra.computePaths(v);
+                                    System.out.println("From "+v);
                                     for (Vertex v1 : vertices)
                                     {
-                                        if(v1.node==uv.get(0))
+                                        if(uv.contains(v1.node))
                                         {
                                             System.out.println("Distance to "+v1+": " + v1.minDistance);
                                             List<Vertex> path = Dijkstra.getShortestPathTo(v1);

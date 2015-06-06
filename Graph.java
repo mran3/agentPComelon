@@ -45,7 +45,12 @@ public class Graph {
                 if (v.node.children[i] != null){
                             
                     //System.out.println("d t p: "+v.node.children[i].distancetoParent);
-                    v.adjacencies.add( new Edge(getVertexOfNode(v.node.children[i], vertices),v.node.children[i].distancetoParent)); 
+                    Vertex von=getVertexOfNode(v.node.children[i], vertices);
+                    v.adjacencies.add( new Edge(von,v.node.children[i].distancetoParent)); 
+                    if(von.adjacencies==null){
+                        von.adjacencies = new ArrayList<Edge>();   
+                    }
+                    von.adjacencies.add(new Edge(v,v.node.children[i].distancetoParent));
                 }
             }
         }
