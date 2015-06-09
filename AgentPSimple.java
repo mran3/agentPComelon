@@ -18,7 +18,7 @@ import unalcol.types.collection.vector.Vector;
  *
  * @author Pedro
  */
-public class AgentP implements AgentProgram {
+public class AgentPSimple implements AgentProgram {
 
     protected SimpleLanguage language;
     protected Vector<String> cmd = new Vector<String>();
@@ -33,7 +33,7 @@ public class AgentP implements AgentProgram {
     boolean start = true;
     int traveledDistance=0;
     List <Vertex> pathToShortestUnvisited= new ArrayList<Vertex>();
-    public AgentP() {
+    public AgentPSimple() {
         currentNode.visited = false;
         System.out.println("hello agent Pedro.");
     }
@@ -150,15 +150,7 @@ public class AgentP implements AgentProgram {
         }
         if (possibleWaysCount >= 2) {
             traveledDistance++;
-            if(pathToShortestUnvisited.size()==1)
-            {
-                   if(pathToShortestUnvisited.get(0).node==currentNode)
-                   {
-                       //System.err.println("Llegue!");
-                       pathToShortestUnvisited.remove(pathToShortestUnvisited.get(0));
-                   }
-            }
-            else if(pathToShortestUnvisited.size()>1)
+            if(pathToShortestUnvisited.size()>1)
             {
                 //remove current
                 pathToShortestUnvisited.remove(0);
@@ -187,8 +179,8 @@ public class AgentP implements AgentProgram {
             //System.out.println(possibleWaysCount);
             //2 is behind
             if (currentNode != null) {
-                if (!currentNode.visited) 
-                {
+                if (!currentNode.visited) {
+
                     //verifica si no es un bucle
                     if (currentNode.parent != null) {
                         Node havebeen = graph.haveBeenHere(x, y, currentNode);
@@ -219,7 +211,7 @@ public class AgentP implements AgentProgram {
 
                             List<Node> uv =graph.getUnVisited(graph.root,new ArrayList<Node>());
                            // graph.printGraph(graph.root, 0);
-                            System.out.println("Unvisited left: "+uv.size());
+                            System.out.println("size: "+graph.getVetices(graph.root, new ArrayList<Vertex>(), new Vertex("root",graph.root) ).size());
                             List<Vertex> vertices = graph.getDijkstraGraph();
                             int closestUnvisitedDistance=1000;
                             Node closestUnvisitedNode=null;
@@ -297,45 +289,43 @@ public class AgentP implements AgentProgram {
 //                            return 0;
                         }
                     }
-                    if(graph.haveBeenHere(x, y, currentNode)==null){
-                        //System.out.println("11111");
-                        if (!PF) {
-                            currentNode.children[0] = new Node(currentNode);
-                        }
-                        if (!PD) {
-                            currentNode.children[1] = new Node(currentNode);
-                        }
-                        if (!PI) {
-                            currentNode.children[3] = new Node(currentNode);
+                    //System.out.println("11111");
+                    if (!PF) {
+                        currentNode.children[0] = new Node(currentNode);
+                    }
+                    if (!PD) {
+                        currentNode.children[1] = new Node(currentNode);
+                    }
+                    if (!PI) {
+                        currentNode.children[3] = new Node(currentNode);
 
-                        }
-                        currentNode.visited = true;
-                        currentNode.x = x;
-                        currentNode.y = y;
-                        System.out.println("Node visited, dir: " + direction);
-                        System.out.println("Distance: " + traveledDistance);
-                        currentNode.direction = direction;
-                        Random rand = new Random();
-                        currentNode.distancetoParent=traveledDistance;
-                        traveledDistance=0;
-                        //heuristic
-                        if (currentNode.children[0] != null && rand.nextInt(10) < 5) {
-                             //la mayoría de las veces sigue derecho
-                            currentNode = currentNode.children[0];
-                            computeCoordinates();
-                            return 0;
-                        }
-                        else 
+                    }
+                    currentNode.visited = true;
+                    currentNode.x = x;
+                    currentNode.y = y;
+                    System.out.println("Node visited, dir: " + direction);
+                    System.out.println("Distance: " + traveledDistance);
+                    currentNode.direction = direction;
+                    Random rand = new Random();
+                    currentNode.distancetoParent=traveledDistance;
+                    traveledDistance=0;
+                    //heuristic
+                    if (currentNode.children[0] != null && rand.nextInt(10) < 6) {
+                         //la mayoría de las veces sigue derecho
+                        currentNode = currentNode.children[0];
+                        computeCoordinates();
+                        return 0;
+                    }
+                    else 
+                    {
+                        //if it hasnt available children 
+                        for(int i=1;i<4;i++)
                         {
-                            //if it hasnt available children 
-                            for(int i=1;i<4;i++)
-                            {
-                                if (currentNode.children[i] != null) {
-                                    currentNode = currentNode.children[i];
-                                    direction = (i + direction) % 4;
-                                    computeCoordinates();
-                                    return i;
-                                }
+                            if (currentNode.children[i] != null) {
+                                currentNode = currentNode.children[i];
+                                direction = (i + direction) % 4;
+                                computeCoordinates();
+                                return i;
                             }
                         }
                     }
@@ -366,12 +356,29 @@ public class AgentP implements AgentProgram {
                     return 0;
                 }
             } else {
-                    System.out.println("Restart!");
-                    Graph graph = new Graph();
-                    currentNode = graph.root;
-                    currentNode.visited=false;
-                    start=true; 
-                    return 0;
+                //aleatorio 
+                System.out.println("LOCO1");
+                boolean flag = true;
+                int k = 0;
+                while (flag) {
+                    k = (int) (Math.random() * 4);
+                    switch (k) {
+                        case 0:
+                            flag = PF;
+                            break;
+                        case 1:
+                            flag = PD;
+                            break;
+                        case 2:
+                            flag = PA;
+                            break;
+                        default:
+                            flag = PI;
+                            break;
+                    }
+                }
+                computeCoordinates();
+                return k;
             }
         }
 
@@ -515,48 +522,20 @@ public class AgentP implements AgentProgram {
         
     }
     public Action compute(Percept p) {
-         int energia = ((Integer) p.getAttribute(language.getPercept(10)));
-        
-        if (ultimaComida != null){
-            //Quitamos cualquier info. previa referente a esa comida
-                memoria.removeElement(ultimaComida + "1");
-                memoria.removeElement(ultimaComida + "0");
-                
-                if(energia >= energiaAntesDeComer ){
-                    memoria.add(ultimaComida + "1");
-                }else {
-                    memoria.add(ultimaComida + "0");
-                }
-                ultimaComida = null;
-        }
-        if (cmd.size() == 0) {
-             //Percepciones y acciones sobre comida
-            if((Boolean) p.getAttribute(language.getPercept(5))) { //hay comida
-                boolean color = ((Boolean) p.getAttribute(language.getPercept(6)));
-                boolean forma = ((Boolean) p.getAttribute(language.getPercept(7)));
-                boolean tamaño = ((Boolean) p.getAttribute(language.getPercept(8)));
-                boolean peso = ((Boolean) p.getAttribute(language.getPercept(9)));
-                
-                if (comerONo(color, forma, tamaño, peso, energia )){
-                    energiaAntesDeComer = energia;
-                    cmd.add(language.getAction(4)); //trague
-                }else {
-                    ultimaComida = null;
-                }
-            }
-            
-            //acciones y percepciones sobre movimiento
+                if (cmd.size() == 0) {
+
             boolean PF = ((Boolean) p.getAttribute(language.getPercept(0))).
                     booleanValue();
             boolean PD = ((Boolean) p.getAttribute(language.getPercept(1))).
                     booleanValue();
             boolean PA = ((Boolean) p.getAttribute(language.getPercept(2))).
                     booleanValue();
-            boolean PI = ((Boolean) p.getAttribute(language.getPercept(3)));
-            boolean MT = ((Boolean) p.getAttribute(language.getPercept(4)));
+            boolean PI = ((Boolean) p.getAttribute(language.getPercept(3))).
+                    booleanValue();
+            boolean MT = ((Boolean) p.getAttribute(language.getPercept(4))).
+                    booleanValue();
 
             int d = accion(PF, PD, PA, PI, MT);
-                
             if (0 <= d && d < 4) {
                 for (int i = 1; i <= d; i++) {
                     cmd.add(language.getAction(3)); //rotate
@@ -569,7 +548,7 @@ public class AgentP implements AgentProgram {
         String x = cmd.get(0);
         cmd.remove(0);
         return new Action(x);
-    }
+   }
 
     /**
      * goalAchieved
