@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package unalcol.agents.examples.labyrinth.agentP;
+package unalcol.agents.examples.labyrinth.teseoeater.agentP;
 import java.util.ArrayList;
 import java.util.List;
 /**

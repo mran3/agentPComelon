@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package unalcol.agents.examples.labyrinth.agentP;
+package unalcol.agents.examples.labyrinth.teseoeater.agentP;
 
 import unalcol.agents.Action;
 import unalcol.agents.AgentProgram;
 import unalcol.agents.Percept;
 import unalcol.agents.simulate.util.SimpleLanguage;
-import unalcol.random.Random;
+import java.util.Random;
+//import unalcol.random.Random;
 import unalcol.types.collection.vector.Vector;
 
 /**
